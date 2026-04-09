@@ -1,73 +1,68 @@
 /* =====================================================
-   CSS variables for the dark modern theme
+   CSS custom properties – bright, kid-friendly palette
    ===================================================== */
 :root {
-  --bg:           #1a1a2e;
-  --panel:        #16213e;
-  --section:      #0f3460;
-  --accent:       #7c5cbf;
-  --accent-light: #9b7ed4;
-  --danger:       #e74c3c;
-  --danger-dark:  #c0392b;
-  --text:         #e0e0f0;
-  --text-muted:   #8888aa;
-  --border:       #2a2a5e;
-  --btn:          #1e1e4e;
-  --btn-hover:    #2e2e6e;
-  --canvas-bg:    #ffffff;
+  --bg-grad-a: #a8edea;
+  --bg-grad-b: #fed6e3;
+  --panel-bg:  rgba(255,255,255,0.92);
+  --panel-shadow: 0 4px 16px rgba(180,120,180,0.15);
+  --section-bg: rgba(255,255,255,0.7);
+  --border:    rgba(180,120,220,0.25);
+  --accent:    #ff6fb4;
+  --accent2:   #4ecdc4;
+  --accent3:   #ffe66d;
+  --btn-active-bg: linear-gradient(135deg,#ff6fb4,#a855f7);
+  --text:      #333;
+  --text-muted:#888;
+  --radius:    10px;
+  --header-h:  48px;
+  --mob-bar-h: 60px;
 }
 
 /* =====================================================
-   Reset and base
+   Reset & base
    ===================================================== */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   font-size: 13px;
-  background: var(--bg);
+  background: linear-gradient(135deg, var(--bg-grad-a), var(--bg-grad-b));
+  background-attachment: fixed;
   color: var(--text);
   height: 100vh;
   overflow: hidden;
-  user-select: none;
 }
 
 /* =====================================================
-   Top bar
+   Top header – centered title
    ===================================================== */
 #topbar {
-  height: 42px;
-  background: #0d0d1e;
+  height: var(--header-h);
+  background: linear-gradient(90deg,#a855f7,#ec4899,#f97316);
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--border);
+  justify-content: center;
+  padding: 0 16px;
   flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(168,85,247,0.4);
 }
 
-#app-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--accent-light);
-  letter-spacing: 1px;
-}
-
-#topbar-hint {
-  font-size: 11px;
-  color: var(--text-muted);
+#topbar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  text-align: center;
 }
 
 /* =====================================================
-   App layout: left panel | canvas area | right panel
+   App 3-column layout
    ===================================================== */
 #app {
   display: flex;
-  height: calc(100vh - 42px);
+  height: calc(100vh - var(--header-h));
 }
 
 /* =====================================================
@@ -75,195 +70,212 @@ body {
    ===================================================== */
 #left-panel,
 #right-panel {
-  width: 200px;
-  background: var(--panel);
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--panel-bg);
+  backdrop-filter: blur(8px);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
-  flex-shrink: 0;
 }
 
-#left-panel {
-  border-right: 1px solid var(--border);
-}
+#left-panel  { border-right: 2px solid var(--border); }
+#right-panel { border-left:  2px solid var(--border); }
 
-#right-panel {
-  border-left: 1px solid var(--border);
-  width: 212px;
-}
-
-/* Scrollbar styling for panels */
+/* Slim colourful scrollbar */
 #left-panel::-webkit-scrollbar,
-#right-panel::-webkit-scrollbar {
-  width: 4px;
-}
+#right-panel::-webkit-scrollbar { width: 4px; }
 #left-panel::-webkit-scrollbar-thumb,
-#right-panel::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
-}
+#right-panel::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 2px; }
 
 /* =====================================================
    Panel sections
    ===================================================== */
 .panel-section {
-  background: var(--section);
-  border-radius: 8px;
+  background: var(--section-bg);
+  border-radius: var(--radius);
   padding: 10px;
   margin-bottom: 8px;
   border: 1px solid var(--border);
+  box-shadow: var(--panel-shadow);
 }
 
 .section-title {
   font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-muted);
+  letter-spacing: 1.2px;
+  color: #a855f7;
   margin-bottom: 8px;
-  font-weight: bold;
 }
 
 /* =====================================================
-   Tool buttons (2-column grid)
+   Tool buttons – 2-column grid, bright colours
    ===================================================== */
 .tool-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .tool-btn {
-  background: var(--btn);
+  background: #fff;
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 2px solid #e9d5ff;
+  border-radius: 8px;
   padding: 7px 4px;
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s, transform 0.08s;
+  transition: all 0.14s;
   text-align: center;
-  font-family: Arial, sans-serif;
+  font-family: inherit;
+  line-height: 1.3;
 }
 
 .tool-btn:hover {
-  background: var(--btn-hover);
-  border-color: var(--accent);
+  background: #f5e8ff;
+  border-color: #a855f7;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(168,85,247,0.2);
 }
 
-/* Highlight the active/selected tool */
+/* Active/selected tool gets a gradient badge */
 .tool-btn.active {
-  background: var(--accent);
-  border-color: var(--accent-light);
+  background: linear-gradient(135deg,#ff6fb4,#a855f7);
+  border-color: #a855f7;
   color: #fff;
-  font-weight: bold;
+  font-weight: 700;
+  box-shadow: 0 3px 10px rgba(168,85,247,0.35);
 }
 
-.tool-btn:active {
-  transform: scale(0.95);
-}
+.tool-btn:active { transform: scale(0.96); }
 
 /* =====================================================
-   Wide and half buttons
+   Wide / half / template buttons
    ===================================================== */
 .wide-btn {
   display: block;
   width: 100%;
   padding: 8px;
   margin-top: 6px;
-  background: var(--btn);
+  background: #fff;
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 2px solid #e9d5ff;
+  border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.12s;
-  font-family: Arial, sans-serif;
+  transition: all 0.14s;
+  font-family: inherit;
+  text-align: center;
 }
 
 .wide-btn:hover {
-  background: var(--btn-hover);
-  border-color: var(--accent);
+  background: #f5e8ff;
+  border-color: #a855f7;
+  box-shadow: 0 2px 8px rgba(168,85,247,0.2);
 }
 
-/* Red-toned danger button for refresh */
-.danger-btn {
-  background: #3e1a1a;
-  border-color: #7e3030;
-  color: #ffaaaa;
-}
+.danger-btn { border-color: #fca5a5; color: #dc2626; }
+.danger-btn:hover { background: #fee2e2; }
 
-.danger-btn:hover {
-  background: #5e2020;
-}
-
-.btn-row {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 6px;
-}
+.btn-row { display: flex; gap: 6px; margin-bottom: 6px; }
 
 .half-btn {
   flex: 1;
   padding: 8px;
-  background: var(--btn);
+  background: #fff;
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 2px solid #e9d5ff;
+  border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.12s;
-  font-family: Arial, sans-serif;
+  transition: all 0.14s;
+  font-family: inherit;
 }
 
 .half-btn:hover {
-  background: var(--btn-hover);
-  border-color: var(--accent);
+  background: #f5e8ff;
+  border-color: #a855f7;
+}
+
+/* Paper template grid */
+.template-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.tpl-btn {
+  padding: 6px 4px;
+  border-radius: 7px;
+  border: 2px solid #ddd;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.14s;
+  font-family: inherit;
+  text-align: center;
+}
+
+.tpl-btn:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.15); transform: translateY(-1px); }
+
+/* Canvas size inputs */
+.dim-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.dim-row label {
+  flex: 1;
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.dim-row input[type="number"] {
+  width: 100%;
+  padding: 5px;
+  border: 2px solid #e9d5ff;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
+  background: #fff;
+  color: var(--text);
+}
+
+.dim-row input[type="number"]:focus {
+  outline: none;
+  border-color: #a855f7;
 }
 
 /* =====================================================
    Brush size slider
    ===================================================== */
-.slider-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.slider-row input[type="range"] {
-  flex: 1;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-#size-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  min-width: 36px;
-  text-align: right;
-}
+.slider-row { display: flex; align-items: center; gap: 8px; }
+.slider-row input[type="range"] { flex: 1; accent-color: #a855f7; cursor: pointer; }
+#size-label { font-size: 11px; color: var(--text-muted); min-width: 36px; text-align: right; }
 
 /* =====================================================
-   Select dropdowns (text settings)
+   Select dropdowns
    ===================================================== */
 select {
   display: block;
   width: 100%;
-  background: var(--btn);
+  background: #fff;
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 5px;
+  border: 2px solid #e9d5ff;
+  border-radius: 7px;
   padding: 6px;
   font-size: 12px;
   margin-bottom: 6px;
   cursor: pointer;
-  font-family: Arial, sans-serif;
+  font-family: inherit;
 }
 
-select:focus {
-  outline: none;
-  border-color: var(--accent);
-}
+select:focus { outline: none; border-color: #a855f7; }
 
 /* =====================================================
    Shape fill checkbox
@@ -275,15 +287,10 @@ select:focus {
   font-size: 12px;
   color: var(--text-muted);
   cursor: pointer;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
-.check-label input[type="checkbox"] {
-  accent-color: var(--accent);
-  cursor: pointer;
-  width: 13px;
-  height: 13px;
-}
+.check-label input { accent-color: #a855f7; cursor: pointer; }
 
 /* =====================================================
    Layer list
@@ -297,170 +304,327 @@ select:focus {
   overflow-y: auto;
 }
 
-/* Each layer row */
 .layer-item {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: var(--btn);
-  border-radius: 5px;
+  background: #fff;
+  border-radius: 7px;
   padding: 5px 6px;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   cursor: pointer;
-  transition: border-color 0.12s, background 0.12s;
+  transition: all 0.12s;
 }
 
-.layer-item:hover {
-  border-color: var(--border);
-}
+.layer-item:hover { border-color: #d8b4fe; }
 
-/* Highlight the currently active (drawing) layer */
 .layer-item.active-layer {
-  border-color: var(--accent);
-  background: #2a1a4e;
+  border-color: #a855f7;
+  background: #faf5ff;
 }
 
-/* Visibility toggle (ON/OFF) */
 .layer-vis-btn {
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 3px;
+  border: 1px solid #e9d5ff;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 9px;
-  padding: 1px 4px;
-  color: var(--text-muted);
+  padding: 1px 5px;
   flex-shrink: 0;
   transition: background 0.1s;
 }
 
-.layer-vis-btn:hover {
-  background: var(--btn-hover);
-}
+.layer-vis-btn.vis-on  { color: #16a34a; border-color: #86efac; }
+.layer-vis-btn.vis-off { color: #9ca3af; }
 
-.layer-vis-btn.vis-on {
-  color: #90ee90;
-  border-color: #407040;
-}
-
-.layer-vis-btn.vis-off {
-  color: #aaaaaa;
-}
-
-/* Layer name label */
 .layer-name {
   flex: 1;
   font-size: 11px;
-  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--text);
 }
 
-/* Clear layer button */
 .layer-clr-btn {
-  background: #3e1a1a;
-  border: 1px solid #7e3030;
-  border-radius: 3px;
-  color: #ffaaaa;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 4px;
+  color: #dc2626;
   font-size: 9px;
   padding: 2px 5px;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.1s;
 }
 
-.layer-clr-btn:hover {
-  background: #5e2020;
-}
+.layer-clr-btn:hover { background: #fecaca; }
 
 /* =====================================================
-   Custom HSV color picker canvases
+   HSV color picker canvases
    ===================================================== */
 #sv-canvas {
   display: block;
-  cursor: crosshair;
-  border-radius: 5px;
+  border-radius: 6px;
   margin-bottom: 6px;
-  border: 1px solid var(--border);
+  border: 2px solid #e9d5ff;
+  cursor: crosshair;
+  width: 100%;   /* CSS width – fills panel */
+  height: auto;  /* auto height keeps pixel ratio */
+  max-width: 180px;
 }
 
 #hue-canvas {
   display: block;
-  cursor: crosshair;
-  border-radius: 3px;
+  border-radius: 4px;
   margin-bottom: 6px;
-  border: 1px solid var(--border);
+  border: 2px solid #e9d5ff;
+  cursor: crosshair;
+  width: 100%;
+  max-width: 180px;
 }
 
-/* Row showing the selected color circle and RGB text */
 #color-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 2px;
 }
 
 #color-box {
-  width: 30px;
-  height: 30px;
+  width: 28px; height: 28px;
   border-radius: 50%;
-  border: 2px solid var(--border);
-  background: rgb(0, 0, 0);
+  border: 3px solid #e9d5ff;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  background: #000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
 }
 
 #color-label {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
   font-family: 'Courier New', monospace;
 }
 
+/* Recent color swatches */
+#recent-swatches,
+#recent-swatches-mob {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.color-swatch {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid #e9d5ff;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  flex-shrink: 0;
+}
+
+.color-swatch:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
 /* =====================================================
-   Main canvas area
+   Canvas area – centers the drawing canvas
    ===================================================== */
 #canvas-area {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #111122;
-  overflow: auto;
+  padding: 16px;
+  overflow: hidden;
+  min-width: 0;
 }
 
-/* White background so erasures look correct visually */
+/* The container auto-scales via aspect-ratio + max-width.
+   All layer canvases fill it with CSS width/height 100%. */
 #canvas-container {
   position: relative;
-  background: var(--canvas-bg);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
-  border-radius: 2px;
+  max-width: 800px;
+  width: 100%;
+  aspect-ratio: 4/3;       /* updated by JS when canvas is resized */
+  background: #fff;
+  box-shadow: 0 8px 40px rgba(168,85,247,0.2), 0 2px 12px rgba(0,0,0,0.08);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-/* All canvases inside the container are stacked absolutely */
+/* Every canvas (layer + preview + text) fills the container */
 #canvas-container canvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
 }
 
-/* Preview canvas stays on top; receives all mouse events */
-#preview-canvas {
-  z-index: 100;
-}
+/* Preview canvas on top; intercepts all mouse events */
+#preview-canvas { z-index: 100; }
 
 /* =====================================================
-   Text input overlay (shown when text tool is active)
+   Text input overlay
    ===================================================== */
 #text-input {
   position: absolute;
   display: none;
-  background: transparent;
-  border: 1px dashed rgba(124, 92, 191, 0.7);
-  border-radius: 2px;
+  background: rgba(255,255,255,0.1);
+  border: 2px dashed rgba(168,85,247,0.7);
+  border-radius: 3px;
   outline: none;
-  padding: 1px 4px;
+  padding: 2px 4px;
   min-width: 60px;
   z-index: 200;
   font-family: Arial, sans-serif;
-  /* Text color and font-size set dynamically by JS */
+  color: transparent;          /* text drawn on canvas, not inside input */
+  caret-color: #a855f7;        /* visible cursor */
+}
+
+#text-input::placeholder {
+  color: rgba(100,100,100,0.5);
+  font-style: italic;
+}
+
+/* =====================================================
+   Custom SVG cursors (set via JS)
+   ===================================================== */
+
+/* =====================================================
+   Mobile bottom toolbar (hidden on desktop)
+   ===================================================== */
+#mobile-bar {
+  display: none;  /* shown via media query */
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--mob-bar-h);
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(8px);
+  border-top: 2px solid #e9d5ff;
+  padding: 6px 8px;
+  gap: 6px;
+  overflow-x: auto;
+  align-items: center;
+  z-index: 500;
+  box-shadow: 0 -4px 20px rgba(168,85,247,0.15);
+}
+
+.mob-btn {
+  flex-shrink: 0;
+  width: 42px; height: 42px;
+  background: #fff;
+  border: 2px solid #e9d5ff;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+}
+
+.mob-btn:hover, .mob-btn.active {
+  background: linear-gradient(135deg,#ff6fb4,#a855f7);
+  border-color: #a855f7;
+  box-shadow: 0 2px 8px rgba(168,85,247,0.35);
+}
+
+#mob-color-swatch {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 3px solid #e9d5ff;
+  cursor: pointer;
+  background: #000;
+  transition: transform 0.1s;
+}
+
+#mob-color-swatch:hover { transform: scale(1.15); }
+
+/* =====================================================
+   Mobile color picker modal
+   ===================================================== */
+#mob-color-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 600;
+  justify-content: center;
+  align-items: center;
+}
+
+/* shown via JS: display:flex */
+
+#mob-color-inner {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  max-width: 300px;
+  width: 90%;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+}
+
+#sv-canvas-mob, #hue-canvas-mob {
+  display: block;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 2px solid #e9d5ff;
+  cursor: crosshair;
+  width: 100%;
+}
+
+#color-row-mob {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#color-box-mob {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 3px solid #e9d5ff;
+  background: #000;
+  flex-shrink: 0;
+}
+
+#color-label-mob {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+/* =====================================================
+   RESPONSIVE – mobile layout
+   ===================================================== */
+@media (max-width: 768px) {
+  body { overflow-y: hidden; }
+
+  #app {
+    height: calc(100vh - var(--header-h) - var(--mob-bar-h));
+  }
+
+  /* Hide side panels; tools are in the mobile bar */
+  #left-panel, #right-panel { display: none; }
+
+  /* Canvas area fills everything */
+  #canvas-area {
+    flex: 1;
+    padding: 8px;
+  }
+
+  /* Canvas container scales to fit the available space */
+  #canvas-container {
+    max-width: 100%;
+  }
+
+  /* Show mobile bottom toolbar */
+  #mobile-bar { display: flex; }
+}
+
+@media (max-width: 480px) {
+  #topbar-title { font-size: 12px; }
 }
