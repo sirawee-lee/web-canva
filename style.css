@@ -1,0 +1,466 @@
+/* =====================================================
+   CSS variables for the dark modern theme
+   ===================================================== */
+:root {
+  --bg:           #1a1a2e;
+  --panel:        #16213e;
+  --section:      #0f3460;
+  --accent:       #7c5cbf;
+  --accent-light: #9b7ed4;
+  --danger:       #e74c3c;
+  --danger-dark:  #c0392b;
+  --text:         #e0e0f0;
+  --text-muted:   #8888aa;
+  --border:       #2a2a5e;
+  --btn:          #1e1e4e;
+  --btn-hover:    #2e2e6e;
+  --canvas-bg:    #ffffff;
+}
+
+/* =====================================================
+   Reset and base
+   ===================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* =====================================================
+   Top bar
+   ===================================================== */
+#topbar {
+  height: 42px;
+  background: #0d0d1e;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#app-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--accent-light);
+  letter-spacing: 1px;
+}
+
+#topbar-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* =====================================================
+   App layout: left panel | canvas area | right panel
+   ===================================================== */
+#app {
+  display: flex;
+  height: calc(100vh - 42px);
+}
+
+/* =====================================================
+   Side panels
+   ===================================================== */
+#left-panel,
+#right-panel {
+  width: 200px;
+  background: var(--panel);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+#left-panel {
+  border-right: 1px solid var(--border);
+}
+
+#right-panel {
+  border-left: 1px solid var(--border);
+  width: 212px;
+}
+
+/* Scrollbar styling for panels */
+#left-panel::-webkit-scrollbar,
+#right-panel::-webkit-scrollbar {
+  width: 4px;
+}
+#left-panel::-webkit-scrollbar-thumb,
+#right-panel::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* =====================================================
+   Panel sections
+   ===================================================== */
+.panel-section {
+  background: var(--section);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+/* =====================================================
+   Tool buttons (2-column grid)
+   ===================================================== */
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.tool-btn {
+  background: var(--btn);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.08s;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.tool-btn:hover {
+  background: var(--btn-hover);
+  border-color: var(--accent);
+}
+
+/* Highlight the active/selected tool */
+.tool-btn.active {
+  background: var(--accent);
+  border-color: var(--accent-light);
+  color: #fff;
+  font-weight: bold;
+}
+
+.tool-btn:active {
+  transform: scale(0.95);
+}
+
+/* =====================================================
+   Wide and half buttons
+   ===================================================== */
+.wide-btn {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  background: var(--btn);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-family: Arial, sans-serif;
+}
+
+.wide-btn:hover {
+  background: var(--btn-hover);
+  border-color: var(--accent);
+}
+
+/* Red-toned danger button for refresh */
+.danger-btn {
+  background: #3e1a1a;
+  border-color: #7e3030;
+  color: #ffaaaa;
+}
+
+.danger-btn:hover {
+  background: #5e2020;
+}
+
+.btn-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.half-btn {
+  flex: 1;
+  padding: 8px;
+  background: var(--btn);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-family: Arial, sans-serif;
+}
+
+.half-btn:hover {
+  background: var(--btn-hover);
+  border-color: var(--accent);
+}
+
+/* =====================================================
+   Brush size slider
+   ===================================================== */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slider-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+#size-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* =====================================================
+   Select dropdowns (text settings)
+   ===================================================== */
+select {
+  display: block;
+  width: 100%;
+  background: var(--btn);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 6px;
+  font-size: 12px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* =====================================================
+   Shape fill checkbox
+   ===================================================== */
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.check-label input[type="checkbox"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+  width: 13px;
+  height: 13px;
+}
+
+/* =====================================================
+   Layer list
+   ===================================================== */
+#layer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Each layer row */
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--btn);
+  border-radius: 5px;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.layer-item:hover {
+  border-color: var(--border);
+}
+
+/* Highlight the currently active (drawing) layer */
+.layer-item.active-layer {
+  border-color: var(--accent);
+  background: #2a1a4e;
+}
+
+/* Visibility toggle (ON/OFF) */
+.layer-vis-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 9px;
+  padding: 1px 4px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+
+.layer-vis-btn:hover {
+  background: var(--btn-hover);
+}
+
+.layer-vis-btn.vis-on {
+  color: #90ee90;
+  border-color: #407040;
+}
+
+.layer-vis-btn.vis-off {
+  color: #aaaaaa;
+}
+
+/* Layer name label */
+.layer-name {
+  flex: 1;
+  font-size: 11px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Clear layer button */
+.layer-clr-btn {
+  background: #3e1a1a;
+  border: 1px solid #7e3030;
+  border-radius: 3px;
+  color: #ffaaaa;
+  font-size: 9px;
+  padding: 2px 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+
+.layer-clr-btn:hover {
+  background: #5e2020;
+}
+
+/* =====================================================
+   Custom HSV color picker canvases
+   ===================================================== */
+#sv-canvas {
+  display: block;
+  cursor: crosshair;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+}
+
+#hue-canvas {
+  display: block;
+  cursor: crosshair;
+  border-radius: 3px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+}
+
+/* Row showing the selected color circle and RGB text */
+#color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+#color-box {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: rgb(0, 0, 0);
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+#color-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+/* =====================================================
+   Main canvas area
+   ===================================================== */
+#canvas-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #111122;
+  overflow: auto;
+}
+
+/* White background so erasures look correct visually */
+#canvas-container {
+  position: relative;
+  background: var(--canvas-bg);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+  border-radius: 2px;
+}
+
+/* All canvases inside the container are stacked absolutely */
+#canvas-container canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Preview canvas stays on top; receives all mouse events */
+#preview-canvas {
+  z-index: 100;
+}
+
+/* =====================================================
+   Text input overlay (shown when text tool is active)
+   ===================================================== */
+#text-input {
+  position: absolute;
+  display: none;
+  background: transparent;
+  border: 1px dashed rgba(124, 92, 191, 0.7);
+  border-radius: 2px;
+  outline: none;
+  padding: 1px 4px;
+  min-width: 60px;
+  z-index: 200;
+  font-family: Arial, sans-serif;
+  /* Text color and font-size set dynamically by JS */
+}

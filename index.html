@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Canvas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header id="topbar">
+    <span id="app-title">Web Canvas</span>
+    <span id="topbar-hint">Click a tool, then draw on the canvas</span>
+  </header>
+
+  <div id="app">
+
+    <!-- Left panel: tools, brush size, text settings, layers -->
+    <aside id="left-panel">
+
+      <!-- Drawing tools -->
+      <div class="panel-section">
+        <div class="section-title">Tools</div>
+        <div class="tool-grid">
+          <button class="tool-btn active" data-tool="brush"      id="btn-brush">Brush</button>
+          <button class="tool-btn"        data-tool="eraser"     id="btn-eraser">Eraser</button>
+          <button class="tool-btn"        data-tool="text"       id="btn-text">Text</button>
+          <button class="tool-btn"        data-tool="image"      id="btn-image">Image</button>
+          <button class="tool-btn"        data-tool="eyedropper" id="btn-eyedropper">Picker</button>
+          <button class="tool-btn"        data-tool="bucket"     id="btn-bucket">Fill</button>
+        </div>
+        <!-- Hidden file input for image upload -->
+        <input type="file" id="image-file" accept="image/*" style="display:none" />
+      </div>
+
+      <!-- Brush size -->
+      <div class="panel-section">
+        <div class="section-title">Brush Size</div>
+        <div class="slider-row">
+          <input type="range" id="brush-size" min="1" max="100" value="10" />
+          <span id="size-label">10 px</span>
+        </div>
+      </div>
+
+      <!-- Text settings: font family (5 options) and font size -->
+      <div class="panel-section">
+        <div class="section-title">Text Settings</div>
+        <select id="font-family">
+          <option value="Arial">Arial</option>
+          <option value="Georgia">Georgia</option>
+          <option value="'Courier New'">Courier New</option>
+          <option value="'Times New Roman'">Times New Roman</option>
+          <option value="Verdana">Verdana</option>
+        </select>
+        <select id="font-size">
+          <option value="12">12 px</option>
+          <option value="16">16 px</option>
+          <option value="20" selected>20 px</option>
+          <option value="24">24 px</option>
+          <option value="32">32 px</option>
+          <option value="48">48 px</option>
+          <option value="64">64 px</option>
+        </select>
+      </div>
+
+      <!-- Layer management -->
+      <div class="panel-section" id="layers-section">
+        <div class="section-title">Layers</div>
+        <div id="layer-list"></div>
+        <button id="add-layer-btn" class="wide-btn">+ Add Layer</button>
+      </div>
+
+      <!-- Refresh button clears all layers -->
+      <div class="panel-section">
+        <button id="refresh-btn" class="wide-btn danger-btn">Refresh Canvas</button>
+      </div>
+
+    </aside>
+
+    <!-- Canvas area: all layer canvases stacked here -->
+    <main id="canvas-area">
+      <div id="canvas-container">
+        <!-- Layer canvases are inserted by JS before preview-canvas -->
+        <canvas id="preview-canvas"></canvas>
+        <!-- Text overlay input: positioned absolutely over canvas while typing -->
+        <input id="text-input" type="text" autocomplete="off" spellcheck="false" />
+      </div>
+    </main>
+
+    <!-- Right panel: shapes, color picker, undo/redo, download -->
+    <aside id="right-panel">
+
+      <!-- Shape tools with optional fill -->
+      <div class="panel-section">
+        <div class="section-title">Shapes</div>
+        <div class="tool-grid">
+          <button class="tool-btn" data-tool="rect"     id="btn-rect">Rect</button>
+          <button class="tool-btn" data-tool="circle"   id="btn-circle">Circle</button>
+          <button class="tool-btn" data-tool="triangle" id="btn-triangle">Triangle</button>
+        </div>
+        <label class="check-label">
+          <input type="checkbox" id="shape-fill" /> Fill shape
+        </label>
+      </div>
+
+      <!-- Custom HSV color picker (no <input type="color">) -->
+      <div class="panel-section">
+        <div class="section-title">Color</div>
+        <!-- SV (saturation-value) square -->
+        <canvas id="sv-canvas" width="180" height="150"></canvas>
+        <!-- Hue bar -->
+        <canvas id="hue-canvas" width="180" height="16"></canvas>
+        <div id="color-row">
+          <div id="color-box"></div>
+          <span id="color-label">rgb(0, 0, 0)</span>
+        </div>
+      </div>
+
+      <!-- History and export actions -->
+      <div class="panel-section">
+        <div class="section-title">Actions</div>
+        <div class="btn-row">
+          <button id="undo-btn" class="half-btn">Undo</button>
+          <button id="redo-btn" class="half-btn">Redo</button>
+        </div>
+        <button id="download-btn" class="wide-btn">Download PNG</button>
+      </div>
+
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
