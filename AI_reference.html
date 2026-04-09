@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Reference – SW Studio HW1</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 13px; line-height: 1.6; max-width: 860px; margin: 40px auto; color: #222; }
+    h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 6px; }
+    h2 { font-size: 16px; margin-top: 36px; background: #f0f0f0; padding: 6px 10px; border-left: 4px solid #555; }
+    h3 { font-size: 13px; margin: 14px 0 4px; color: #444; }
+    .label { font-weight: bold; color: #333; }
+    .box { background: #fafafa; border: 1px solid #ddd; border-radius: 4px; padding: 10px 14px; margin: 6px 0; white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; }
+    .prompt-box { background: #eef4ff; border-color: #aac; }
+    .response-box { background: #f0fff4; border-color: #8c8; }
+    .refined-box { background: #fff8ee; border-color: #ca8; }
+    .meta { color: #666; font-size: 12px; margin-bottom: 4px; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 30px 0; }
+    @media print { body { margin: 20px; } }
+  </style>
+</head>
+<body>
+
+<h1>AI Reference Report — Software Studio HW1: Web Canvas</h1>
+<p><span class="label">Student ID:</span> 110006226</p>
+<p><span class="label">AI Tool Used:</span> Google Gemini 2.0 Flash Thinking Experimental</p>
+<p><span class="label">Project:</span> Web Canvas drawing application (HTML5 Canvas, vanilla JS)</p>
+
+<hr>
+
+<!-- ======================================================= -->
+<h2>Usage 1 — Mobile Responsive Layout</h2>
+
+<p class="meta"><span class="label">Location:</span> index.html (lines 141–171), style.css (approx. lines 490–560)</p>
+
+<h3>Prompt</h3>
+<div class="box prompt-box">I am building a drawing app with a left panel, right panel, and canvas in the middle. On desktop it looks fine, but on mobile the panels take up too much space. I want to hide both side panels on small screens and show a horizontal scrollable toolbar at the bottom instead. The toolbar should have only the most important tools. What is the best way to do this with HTML and CSS only, without JavaScript layout code?</div>
+
+<h3>AI Response (summary)</h3>
+<div class="box response-box">Use a CSS media query at max-width: 768px. Set display: none on both aside panels. Create a fixed div at the bottom with overflow-x: auto and display: flex so tools scroll horizontally. Use position: fixed with bottom: 0 and set padding-bottom on the canvas area so content is not hidden behind the bar. For touch support on the canvas, add touch-action: none and handle touchstart/touchmove/touchend events in JavaScript with e.preventDefault().</div>
+
+<h3>Refinement &amp; Explanation</h3>
+<div class="box refined-box">I followed the structure but made several changes. I added a mobile color picker as a separate modal overlay (#mob-color-modal) because the color picker canvases are too small to use in a tiny toolbar. I also added a color swatch button in the toolbar that opens this modal. In JavaScript, I added a separate bindMobileUI() function to wire up the mobile-only buttons (undo, redo, download, color swatch). I also kept e.preventDefault() on touchstart and touchmove on the preview canvas to stop the page from scrolling while drawing. Without this, the browser would scroll instead of drawing.</div>
+
+<hr>
+
+<!-- ======================================================= -->
+<h2>Usage 2 — Custom SVG Cursors via Data URI</h2>
+
+<p class="meta"><span class="label">Location:</span> app.js (lines 33–56)</p>
+
+<h3>Prompt</h3>
+<div class="box prompt-box">I want custom mouse cursors for my canvas drawing app. For the brush tool I want a pencil shape, for the eraser I want an eraser block shape, and for the eyedropper I want a dropper shape. I do not want to use external image files. How do I create these cursors entirely in JavaScript without any external files, and how do I set the hotspot so the cursor tip is in the right position?</div>
+
+<h3>AI Response (summary)</h3>
+<div class="box response-box">You can encode an SVG as a data URI and use it as a CSS cursor value. Build the SVG as a string, pass it through encodeURIComponent(), then set cursor to: url("data:image/svg+xml,ENCODED_SVG") hotspotX hotspotY, auto. The hotspot values tell the browser which pixel of the image is the actual pointer tip. For a pencil rotated 45 degrees, the tip is near the bottom-left corner, so hotspot would be something like 2 22 for a 24x24 image.</div>
+
+<h3>Refinement &amp; Explanation</h3>
+<div class="box refined-box">The AI gave the correct technique but I had to design the SVG shapes myself. For the pencil cursor I used a rotated group (transform="rotate(-45,12,12)") with a rectangle body and a triangle tip. The hotspot I set to (2, 22) so the drawing point matches the pencil tip. For the eraser I used a rounded rectangle with a center line to look like a real eraser block, with hotspot at (22, 14) so the right edge erases. I wrapped everything in a helper function makeCursor(svgBody, w, h, hx, hy) to avoid repeating the data URI encoding for each cursor.</div>
+
+<hr>
+
+<!-- ======================================================= -->
+<h2>Usage 3 — Custom HSV Color Picker with Canvas Gradients</h2>
+
+<p class="meta"><span class="label">Location:</span> app.js (lines 195–260)</p>
+
+<h3>Prompt</h3>
+<div class="box prompt-box">My assignment says I cannot use input[type="color"]. I need to build a color picker from scratch using HTML5 Canvas. It should have a hue bar where the user can drag to change hue, and a square where the user can pick saturation and brightness. How do I draw the saturation-value square correctly for the selected hue? I am not sure how to combine the gradients.</div>
+
+<h3>AI Response (summary)</h3>
+<div class="box response-box">For the hue bar, draw a linear gradient from left to right with color stops at red, yellow, green, cyan, blue, magenta, and red again. For the SV square: first fill the whole square with the pure hue color (hsvToRgb(h, 1, 1)). Then overlay a white-to-transparent gradient left to right to control saturation. Then overlay a transparent-to-black gradient top to bottom to control value. This gives the standard Photoshop-style color square. Store the current saturation and value as numbers between 0 and 1, and map the click position to these values.</div>
+
+<h3>Refinement &amp; Explanation</h3>
+<div class="box refined-box">The three-layer drawing approach worked well. I extracted it into a _drawSV(ctx, w, h) helper so I could reuse it for both the desktop and mobile picker canvases. I added a small circle drawn at the current (s, v) position so the user can see where they selected. The stroke color of this circle switches between black and white depending on pickerV so it stays visible on both dark and bright backgrounds. I also added hsvToRgb and rgbToHsv conversion functions to keep the internal color state in HSV while outputting rgb(...) strings for the canvas API.</div>
+
+<hr>
+
+<!-- ======================================================= -->
+<h2>Usage 4 — Stack-Based BFS Flood Fill (Bucket Tool)</h2>
+
+<p class="meta"><span class="label">Location:</span> app.js (lines 347–365)</p>
+
+<h3>Prompt</h3>
+<div class="box prompt-box">I want to add a bucket fill tool to my HTML5 Canvas drawing app. When the user clicks a point, all connected pixels of the same color should be replaced with the current drawing color. I tried a recursive approach but it crashed the browser on large areas with a stack overflow error. What is a better way to implement this that will not cause a crash?</div>
+
+<h3>AI Response (summary)</h3>
+<div class="box response-box">Use a stack-based iterative approach instead of recursion. Get the ImageData for the full canvas. Push the starting pixel index onto a JavaScript array as a stack. In a while loop, pop one index, check if it matches the target color, fill it, then push the four neighbors (left, right, up, down). Use a Uint8Array the same size as the canvas to track visited pixels so you never process the same pixel twice. This avoids call stack limits and is faster than a recursive approach.</div>
+
+<h3>Refinement &amp; Explanation</h3>
+<div class="box refined-box">I followed this structure closely. I added an early exit if the target color already equals the fill color to avoid an infinite loop. I also added bounds checking before pushing neighbors (cx &lt; 0, cx &gt;= CANVAS_W, etc.) to avoid out-of-bounds reads. The visited array uses Uint8Array for memory efficiency — one byte per pixel instead of a full boolean object. The function reads a snapshot with getImageData, modifies the data array in memory, then writes it back with putImageData in one call, which is much faster than drawing dot by dot.</div>
+
+<hr>
+
+<!-- ======================================================= -->
+<h2>Usage 5 — Code Structure and Refactoring</h2>
+
+<p class="meta"><span class="label">Location:</span> app.js (entire file)</p>
+
+<h3>Prompt</h3>
+<div class="box prompt-box">My canvas drawing app code started as one big DOMContentLoaded callback and grew to over 600 lines. It is hard to read and maintain. Can you help me refactor it? I want to separate it into clear sections with named functions. For example, all the event binding code, all the drawing code, and all the layer management code should be in separate functions. Also, some of my variable names are not clear, like "d" for drag state and "c" for a canvas. Please help me rename them and reorganize the structure.</div>
+
+<h3>AI Response (summary)</h3>
+<div class="box response-box">Split the code into focused functions: bindToolButtons() for tool button events, bindCanvasEvents() for mouse and touch events on the canvas, bindUIEvents() for panel controls, and bindMobileUI() for mobile-specific behavior. Move drawing logic into small named helpers: paintDot(), paintLine(), sprayPaint(), renderShape(). Keep app state at the top of the file as module-level variables so all functions can access them. Use descriptive names: isDrawing instead of d, shapeStart instead of s0, previewCtx instead of pCtx, and so on.</div>
+
+<h3>Refinement &amp; Explanation</h3>
+<div class="box refined-box">I used the suggested structure but added my own grouping. For example, I kept _commitText() as a private helper (underscore prefix) and exposed finalizeText() as the public function called by tool buttons and download. I also separated getCanvasPos() as a utility that converts CSS mouse coordinates to canvas logical pixels, because this remapping is needed in every mouse handler. The AI suggested putting all state at the top which I kept, but I also added short comments at the top of each logical group (cursors, color picker, layers, etc.) to make the file easier to scan.</div>
+
+<hr>
+<p style="font-size:11px; color:#888; margin-top:40px;">
+  AI-assisted portions were reviewed, tested, and modified by the student. All final code was understood and adjusted to fit the project requirements.
+</p>
+
+</body>
+</html>

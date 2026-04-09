@@ -1,14 +1,8 @@
 'use strict';
 
-/* =====================================================
-   Canvas logical resolution (fixed)
-   ===================================================== */
 const CANVAS_W = 800;
 const CANVAS_H = 600;
 
-/* =====================================================
-   App state
-   ===================================================== */
 let currentTool = 'brush';
 let brushSize   = 10;
 let shapeFill   = false;
@@ -19,32 +13,24 @@ let pickerH = 0, pickerS = 1, pickerV = 0;
 
 let layers    = [];
 let activeIdx = 0;
-
 let recentColors = [];
 
 let isDrawing = false;
 let lastX = 0, lastY = 0;
 let shapeStart = null;
 
-// Simple text tool state
 let textActive = false;
 let textX = 0, textY = 0;
 
-// Image placement
 let imgState = null;
 
-/* =====================================================
-   DOM refs
-   ===================================================== */
 let previewCanvas, previewCtx, containerEl, textInputEl;
 let svCanvas, svCtx, hueCanvas, hueCtx;
 let colorBoxEl, colorLabelEl, layerListEl, imageFileInput;
 let brushSizeInput, sizeLabelEl, fontFamilySelect, fontSizeSelect, shapeFillCheckbox;
 let svMob, svMobCtx, hueMob, hueMobCtx, colorBoxMob, colorLabelMob;
 
-/* =====================================================
-   SVG cursor data-URIs
-   ===================================================== */
+/* --- SVG cursors as data-URIs so no external files are needed --- */
 function makeCursor(svgBody, w, h, hx, hy) {
   const enc = encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">${svgBody}</svg>`
@@ -68,9 +54,6 @@ const CURSOR_EYEDROPPER = makeCursor(
   `<path d="M19 3a1 1 0 011 1 1 1 0 01-.3.7L13 11.4l1 1L12.7 13.7l-1-1L5 19.4A1.5 1.5 0 013 18l6.7-6.7-1-1L10 9l1 1 6.7-6.7A1 1 0 0119 3z" fill="#4a90e2"/>
    <circle cx="4" cy="21" r="2" fill="#4a90e2" stroke="#2563eb" stroke-width="1"/>`, 24, 24, 4, 20);
 
-/* =====================================================
-   Init
-   ===================================================== */
 window.addEventListener('DOMContentLoaded', () => {
   containerEl      = document.getElementById('canvas-container');
   previewCanvas    = document.getElementById('preview-canvas');
@@ -113,9 +96,7 @@ window.addEventListener('DOMContentLoaded', () => {
   updateCursor();
 });
 
-/* =====================================================
-   Coordinate mapping (CSS display size → canvas logical px)
-   ===================================================== */
+/* --- CSS display coords → canvas logical pixels --- */
 function getCanvasPos(e) {
   const rect = previewCanvas.getBoundingClientRect();
   return {
@@ -124,9 +105,6 @@ function getCanvasPos(e) {
   };
 }
 
-/* =====================================================
-   Layer management
-   ===================================================== */
 function addLayer(name) {
   const canvas = document.createElement('canvas');
   canvas.width = CANVAS_W; canvas.height = CANVAS_H;
@@ -194,9 +172,7 @@ function renderLayerList() {
   }
 }
 
-/* =====================================================
-   Undo / Redo (per layer, ImageData snapshots)
-   ===================================================== */
+/* --- undo/redo: per-layer ImageData snapshots, max 30 steps --- */
 function snapshotUndo(idx) {
   const l = layers[idx !== undefined ? idx : activeIdx]; if (!l) return;
   l.undoStack.push(l.ctx.getImageData(0, 0, CANVAS_W, CANVAS_H));
@@ -214,9 +190,6 @@ function redo() {
   l.ctx.putImageData(l.redoStack.pop(), 0, 0);
 }
 
-/* =====================================================
-   Recent colors (last 5 used)
-   ===================================================== */
 function addRecentColor() {
   const { r, g, b } = drawColor, key = `${r},${g},${b}`;
   recentColors = recentColors.filter(c => `${c.r},${c.g},${c.b}` !== key);
@@ -245,9 +218,7 @@ function renderRecentSwatches() {
   });
 }
 
-/* =====================================================
-   Custom HSV color picker (no <input type="color">)
-   ===================================================== */
+/* --- HSV color picker: hue bar + saturation/value square, no input[type=color] --- */
 function initColorPicker() {
   drawHueBar(hueCtx, hueCanvas.width, hueCanvas.height);
   drawSVSquare();
@@ -292,9 +263,11 @@ function drawHueBar(ctx, w, h) {
 function _drawSV(ctx, w, h) {
   const { r, g, b } = hsvToRgb(pickerH, 1, 1);
   ctx.fillStyle = `rgb(${r},${g},${b})`; ctx.fillRect(0, 0, w, h);
+  /* white→transparent overlay for saturation axis */
   const wg = ctx.createLinearGradient(0, 0, w, 0);
   wg.addColorStop(0, 'rgba(255,255,255,1)'); wg.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = wg; ctx.fillRect(0, 0, w, h);
+  /* black→transparent overlay for value axis */
   const bg = ctx.createLinearGradient(0, 0, 0, h);
   bg.addColorStop(0, 'rgba(0,0,0,0)'); bg.addColorStop(1, 'rgba(0,0,0,1)');
   ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
@@ -347,15 +320,12 @@ function rgbToHsv(r,g,b){
   return{h,s,v};
 }
 
-/* =====================================================
-   Tool selection
-   ===================================================== */
 function bindToolButtons() {
   document.querySelectorAll('[data-tool]').forEach(btn => {
     btn.addEventListener('click', () => {
       const tool = btn.dataset.tool;
       if (tool === 'image') { imageFileInput.click(); return; }
-      if (textActive) finalizeText(); // commit text when switching tools
+      if (textActive) finalizeText();
       if (imgState) stampImage();
       setTool(tool);
     });
@@ -398,9 +368,6 @@ function updateCursor() {
   previewCanvas.style.cursor = map[currentTool] || 'crosshair';
 }
 
-/* =====================================================
-   Canvas mouse / touch events
-   ===================================================== */
 function bindCanvasEvents() {
   previewCanvas.addEventListener('mousedown', e => { onMouseDown(e); });
   previewCanvas.addEventListener('mousemove',  onMouseMove);
@@ -418,7 +385,6 @@ function bindCanvasEvents() {
 function onMouseDown(e) {
   const { x, y } = getCanvasPos(e);
 
-  // Image placement
   if (imgState) {
     const handle = hitTestHandle(x, y);
     if (handle) {
@@ -435,13 +401,8 @@ function onMouseDown(e) {
     return;
   }
 
-  // Text tool: show input at click position
-  if (currentTool === 'text') {
-    beginTextInput(x, y);
-    return;
-  }
+  if (currentTool === 'text') { beginTextInput(x, y); return; }
 
-  // Drawing tools
   switch (currentTool) {
     case 'brush': case 'eraser': case 'spray':
       addRecentColor(); snapshotUndo();
@@ -483,16 +444,9 @@ function onMouseLeave() {
   if (isDrawing && ['brush','eraser','spray'].includes(currentTool)) isDrawing = false;
 }
 
-/* =====================================================
-   Simple text tool
-   Click canvas → input appears with blinking cursor → user types →
-   Enter / Esc → commit or cancel (stay in text mode)
-   Switching to another tool → commits and switches
-   ===================================================== */
+/* --- text tool: click → input appears → type → Enter/Esc to finish --- */
 function beginTextInput(x, y) {
-  // Commit any previous text first (without leaving text mode)
-  if (textActive) _commitText();
-
+  if (textActive) _commitText(); /* commit previous before starting new */
   textActive = true;
   textX = x; textY = y;
 
@@ -504,15 +458,13 @@ function beginTextInput(x, y) {
   textInputEl.style.top        = (y * scaleX) + 'px';
   textInputEl.style.fontFamily = fontFamilySelect.value;
   textInputEl.style.fontSize   = (size * scaleX) + 'px';
-  textInputEl.style.color      = colorStr(); // text color matches current brush color
+  textInputEl.style.color      = colorStr();
   textInputEl.style.display    = 'block';
   textInputEl.value            = '';
 
-  // setTimeout avoids focus being blocked by ongoing mousedown event
-  setTimeout(() => textInputEl.focus(), 0);
+  setTimeout(() => textInputEl.focus(), 0); /* defer so mousedown does not block focus */
 }
 
-// Draw the current input text to the canvas layer (internal helper)
 function _commitText() {
   const text = textInputEl.value;
   textInputEl.style.display = 'none';
@@ -522,31 +474,27 @@ function _commitText() {
     if (ctx) {
       snapshotUndo();
       const size = parseInt(fontSizeSelect.value);
-      ctx.font         = `${size}px ${fontFamilySelect.value}`;
-      ctx.fillStyle    = colorStr();
+      ctx.font = `${size}px ${fontFamilySelect.value}`;
+      ctx.fillStyle = colorStr();
       ctx.textBaseline = 'top';
       ctx.fillText(text, textX, textY);
     }
   }
 }
 
-// Public: commit and optionally switch tool (called by tool buttons, download, etc.)
 function finalizeText() {
   if (!textActive) return;
   textActive = false;
   _commitText();
 }
 
-/* =====================================================
-   Drawing – Brush / Eraser
-   ===================================================== */
 function getActiveCtx() { return layers[activeIdx]?.ctx || null; }
 function colorStr()     { return `rgb(${drawColor.r},${drawColor.g},${drawColor.b})`; }
 
 function paintDot(x, y) {
   const ctx = getActiveCtx(); if (!ctx) return;
   if (currentTool === 'eraser') {
-    ctx.save(); ctx.globalCompositeOperation = 'destination-out';
+    ctx.save(); ctx.globalCompositeOperation = 'destination-out'; /* true erase, not white paint */
     ctx.beginPath(); ctx.arc(x, y, brushSize/2, 0, Math.PI*2);
     ctx.fillStyle = 'rgba(0,0,0,1)'; ctx.fill(); ctx.restore();
   } else {
@@ -569,9 +517,6 @@ function paintLine(x, y) {
   }
 }
 
-/* =====================================================
-   Spray paint (bonus feature)
-   ===================================================== */
 function sprayPaint(x, y) {
   const ctx = getActiveCtx(); if (!ctx) return;
   const radius  = brushSize * 1.5;
@@ -585,9 +530,7 @@ function sprayPaint(x, y) {
   }
 }
 
-/* =====================================================
-   Shape tools — preview on overlay canvas, finalize on active layer
-   ===================================================== */
+/* --- shape preview on overlay canvas → commit to layer on mouseup (no flicker) --- */
 function previewShape(x, y) {
   previewCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   renderShape(previewCtx, shapeStart.x, shapeStart.y, x, y);
@@ -618,9 +561,7 @@ function renderShape(ctx, x0, y0, x1, y1) {
   ctx.restore();
 }
 
-/* =====================================================
-   Flood fill (Bucket tool) – stack-based BFS
-   ===================================================== */
+/* --- flood fill: stack-based BFS to avoid call stack overflow on large areas --- */
 function floodFill(startX, startY) {
   const ctx = getActiveCtx(); if (!ctx) return;
   const px = Math.round(startX), py = Math.round(startY);
@@ -643,9 +584,7 @@ function floodFill(startX, startY) {
   ctx.putImageData(imgData,0,0);
 }
 
-/* =====================================================
-   Eyedropper – sample composite colour (bonus)
-   ===================================================== */
+/* --- eyedropper: samples composite of all visible layers --- */
 function sampleColor(x, y) {
   const tmp = document.createElement('canvas');
   tmp.width=CANVAS_W; tmp.height=CANVAS_H;
@@ -660,9 +599,6 @@ function sampleColor(x, y) {
   setTool('brush');
 }
 
-/* =====================================================
-   Image tool: upload → place with handles → stamp
-   ===================================================== */
 const HANDLE_R = 6, HANDLES = ['tl','tr','bl','br'];
 
 function startImagePlacement(img) {
@@ -719,9 +655,6 @@ function stampImage(){
   imgState=null;previewCtx.clearRect(0,0,CANVAS_W,CANVAS_H);updateCursor();
 }
 
-/* =====================================================
-   Canvas rotation (CW / CCW, keeps pixel dimensions)
-   ===================================================== */
 function rotateCanvas(dir) {
   const angle = dir === 'cw' ? Math.PI/2 : -Math.PI/2;
   layers.forEach(l => {
@@ -734,16 +667,10 @@ function rotateCanvas(dir) {
   });
 }
 
-/* =====================================================
-   Paper template (background colour)
-   ===================================================== */
 function applyTemplate(bg) {
   canvasBg = bg; containerEl.style.background = bg;
 }
 
-/* =====================================================
-   Download – composites all visible layers with background
-   ===================================================== */
 function downloadCanvas() {
   if (textActive) finalizeText();
   if (imgState) stampImage();
@@ -754,9 +681,6 @@ function downloadCanvas() {
   const link=document.createElement('a');link.download='canvas.png';link.href=tmp.toDataURL('image/png');link.click();
 }
 
-/* =====================================================
-   UI event bindings
-   ===================================================== */
 function bindUIEvents() {
   brushSizeInput.addEventListener('input', () => {
     brushSize = parseInt(brushSizeInput.value);
@@ -765,9 +689,6 @@ function bindUIEvents() {
 
   shapeFillCheckbox.addEventListener('change', () => { shapeFill = shapeFillCheckbox.checked; });
 
-  // --- text input events ---
-  // Enter → commit text, stay in text mode (user can click again to type elsewhere)
-  // Escape → cancel without drawing, stay in text mode
   textInputEl.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -781,18 +702,15 @@ function bindUIEvents() {
     }
   });
 
-  // Clicking anywhere outside the input or canvas → commit text
-  // (canvas clicks are handled by onMouseDown → beginTextInput)
+  /* clicking outside the input or canvas commits any active text */
   document.addEventListener('mousedown', e => {
     if (!textActive) return;
-    if (e.target === textInputEl) return;   // typing in the input itself — do nothing
-    if (e.target === previewCanvas) return; // canvas click — onMouseDown handles it
-    // Clicked on a panel, button, etc. → commit
+    if (e.target === textInputEl) return;
+    if (e.target === previewCanvas) return;
     textActive = false;
     _commitText();
   });
 
-  // Undo / Redo
   document.getElementById('undo-btn').addEventListener('click', undo);
   document.getElementById('redo-btn').addEventListener('click', redo);
   document.getElementById('download-btn').addEventListener('click', downloadCanvas);
@@ -809,16 +727,13 @@ function bindUIEvents() {
     setActiveLayer(layers.length - 1);
   });
 
-  // Paper templates
   document.querySelectorAll('.tpl-btn').forEach(btn => {
     btn.addEventListener('click', () => applyTemplate(btn.dataset.bg));
   });
 
-  // Rotation
   document.getElementById('rotate-cw-btn').addEventListener('click',  () => rotateCanvas('cw'));
   document.getElementById('rotate-ccw-btn').addEventListener('click', () => rotateCanvas('ccw'));
 
-  // Keyboard shortcuts
   document.addEventListener('keydown', e => {
     if (document.activeElement === textInputEl) return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
@@ -828,9 +743,6 @@ function bindUIEvents() {
   });
 }
 
-/* =====================================================
-   Mobile UI
-   ===================================================== */
 function bindMobileUI() {
   const swatch = document.getElementById('mob-color-swatch');
   const modal  = document.getElementById('mob-color-modal');
